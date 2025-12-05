@@ -1,8 +1,8 @@
-# Human-Following TurtleBot 3 with Gesture Recognition
-The repository showcases a turtlebot 3 Burger robot, equipped with a Logitech c505e camera for vision-based tracking and gesture recognition, focusing on human-robot interaction and evaluating gesture recognition accuracy, developed over two semesters.
+# TurtleBot 3 with Gesture Recognition
+The repository showcases a turtlebot 3 Burger robot for gesture recognition, focusing on human-robot interaction and evaluating gesture recognition accuracy, developed over two semesters.
 
 ## Project Overview
-This repository contains the implementation of a human-following robot using the TurtleBot 3 Burger, equipped with a Logitech c505e camera (or Raspberry Pi Camera Module v2/v3) for vision-based tracking and gesture recognition. The robot follows a human while maintaining a safe distance and responds to simple hand gestures (e.g., "stop," "go," "turn") to control its behavior. The project emphasizes human-robot interaction (HRI) with a research focus on evaluating gesture recognition accuracy. Developed as a two-semester project (September 2025–May 2026), it includes simulation in Gazebo and real-world testing.
+This repository contains the implementation of a human-following robot using the TurtleBot 3 Burger for gesture recognition. The robot responds to simple hand gestures (e.g., "stop," "go," "turn") to control its behavior. The project emphasizes human-robot interaction (HRI) with a research focus on evaluating gesture recognition accuracy. Developed as a two-semester project (September 2025–May 2026), it includes simulation in Gazebo and real-world testing.
 Hardware
 
 * TurtleBot 3 Burger: Equipped with Raspberry Pi 4, OpenCR board, motors, battery, IMU, and wheel encoders.
@@ -96,13 +96,6 @@ ros2 run human_following follow_person
 ```bash
 ros2 run gesture_recognition gesture_control
 ```
-
-## Project Roadmap
-
-* Phase 1 (Sep 2025): Hardware assembly, ROS 2 setup, and teleoperation.
-* Phase 2 (Oct–Dec 2025): Human-following prototype with camera-based tracking, Gazebo simulation, and basic safety stops.
-* Phase 3 (Jan–Mar 2026): Gesture recognition integration (e.g., stop/go/turn), PID tuning, and initial user studies.
-* Phase 4 (Apr–May 2026): Extensive testing, gesture accuracy evaluation, and final report/thesis.
 
 ## Contributing
 
