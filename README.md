@@ -3,15 +3,6 @@ The repository showcases a turtlebot 3 Burger robot for gesture recognition, foc
 
 ## Project Overview
 This repository contains the implementation of a human-following robot using the TurtleBot 3 Burger for gesture recognition. The robot responds to simple hand gestures (e.g., "stop," "go," "turn") to control its behavior. The project emphasizes human-robot interaction (HRI) with a research focus on evaluating gesture recognition accuracy. Developed as a two-semester project (September 2025–May 2026), it includes simulation in Gazebo and real-world testing.
-Hardware
-
-* TurtleBot 3 Burger: Equipped with Raspberry Pi 4, OpenCR board, motors, battery, IMU, and wheel encoders.
-* Camera: Logitech c505e USB webcam or Raspberry Pi Camera Module v2/v3 (~$25-35) mounted on the front plate.
-* Optional Add-ons:
-  * USB microphone (~$10) for potential future audio extensions.
-  * Low-cost servo (~$5) for camera angle adjustment if needed.
-
-
 
 ## Software
 
