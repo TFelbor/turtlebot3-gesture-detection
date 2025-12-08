@@ -20,7 +20,7 @@ This project implements a distributed control system that allows a user to drive
 *Figure 3: Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation.*
 
 ### 🎥 Demo
-https://github.com/user-attachments/assets/demo
+https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206
 
 ---
 
