@@ -28,16 +28,67 @@ The system was built using **ROS Noetic** and **MediaPipe**, achieving real-time
 
 ---
 
-## 🤖 System Architecture
-The project uses a **Distributed ROS Architecture** to split the workload:
-1.  **The Brain (Ubuntu VM):** Processes video feed to detect hand skeletons.
-2.  **The Body (Raspberry Pi 4):** Receives commands over WiFi and drives the motors.
+## 🤖 System Architecture Diagram
 
-| Component | Responsibility | Technology |
-| :--- | :--- | :--- |
-| **Gesture Node** | Captures webcam video, classifies hand poses | Python, MediaPipe |
-| **Network** | Transmits "GO/STOP/LEFT" commands | ROS Topics, WiFi |
-| **Motion Node** | Converts commands to wheel velocity, handles safety | Python, TurtleBot3 Drivers |
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       UBUNTU VM (Development Machine)       │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  Gesture Recognition Node (Python + MediaPipe)          ││
+│  │  - Capture video from built in camera                   ││
+│  │  - Detect hand poses using MediaPipe                    ││
+│  │  - Map poses to gesture commands (GO, STOP, etc.)       ││
+│  │  - Publish commands to ROS topic: /gesture_command      ││
+│  └─────────────────────────────────────────────────────────┘│
+│              ↓ (ROS topic: /gesture_command)                │
+│         Over Network (WiFi/SSH)                             │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│                 RASPBERRY PI 4 (TurtleBot3)                 │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  Motion Control Node (Python + ROS)                     ││
+│  │  - Subscribe to /gesture_command topic                  ││
+│  │  - Translate commands to wheel velocities               ││
+│  │  - Implement 3-second auto-STOP safety feature          ││
+│  │  - Publish to /cmd_vel (motor control)                  ││
+│  └─────────────────────────────────────────────────────────┘│
+│              ↓ (ROS topic: /cmd_vel)                        │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  TurtleBot3 Motor Drivers                               ││
+│  │  - Actuate wheels based on velocity commands            ││
+│  │  - Provide odometry feedback (optional)                 ││
+│  └─────────────────────────────────────────────────────────┘│
+│              ↓ (Physical)                                   │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  TurtleBot3 Chassis & Motors                            ││
+│  │  - Execute movement commands                            ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 🔄 ROS Node Communication Graph
+
+```
+Gesture Recognition Node          Motion Control Node
+    (Ubuntu VM)                      (Raspberry Pi)
+        │                                  │
+        │ Publishes:                       │
+        ├─→ /gesture_command ─────────────→ Subscribes
+        │  (String: GO, STOP,              │
+        │   LEFT, RIGHT, BACK-UP)          │
+        │                                  │
+        │                           Publishes:
+        │                           │
+        │                           ├─→ /cmd_vel
+        │                              (Twist message)
+        │                              
+        │                           Subscribes:
+        │                           │
+        └───────────────────────────┴─ /gesture_timeout
+                                       (auto-STOP signal)
+```
+
 
 ### Supported Gestures
 | Gesture | Action | Description |
