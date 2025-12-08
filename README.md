@@ -90,7 +90,7 @@ Gesture Recognition Node          Motion Control Node
 ```
 
 
-### Supported Gestures
+### 🤙 Supported Gestures
 | Gesture | Action | Description |
 | :--- | :--- | :--- |
 | **Fist** | **FORWARD** | Robot drives straight at 0.2 m/s |
