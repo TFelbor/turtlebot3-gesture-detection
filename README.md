@@ -80,7 +80,7 @@ catkin_make
 source devel/setup.bash
 ````
 
-### 2\. Robot Setup (The "Body")
+### 2. Robot Setup (The "Body")
 
 *SSH into the Raspberry Pi and clone this repo into `~/catkin_ws/src`*
 
@@ -92,7 +92,7 @@ catkin_make
 source devel/setup.bash
 ```
 
------
+---
 
 ## 🚀 How to Run
 
@@ -115,12 +115,3 @@ source devel/setup.bash
     export ROS_MASTER_URI=http://[ROBOT_IP]:11311
     rosrun turtlebot3_gesture gesture_recognition_node.py
     ```
-
------
-
-## 🔮 Future Roadmap (Semester 2)
-
-  * **Obstacle Avoidance:** Integrate LIDAR sensors to prevent collisions.
-  * **Speed Control:** Use hand distance to control speed (closer = faster).
-  * **Onboard Processing:** Migrate vision models to run directly on the Raspberry Pi.
-
