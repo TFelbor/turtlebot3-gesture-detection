@@ -1,93 +1,126 @@
 # TurtleBot3 Hand Gesture Recognition System (v1.0)
 
-**Status:** Completed (Semester 1 Deliverable)  
-**Developer:** Tytus Felbor
-**Tech Stack:** ROS Noetic, MediaPipe, OpenCV, Python, TurtleBot3 (Raspberry Pi 4)
+**Project Status:** Completed (Semester 1 Deliverable)  
+**Timeline:** September 2025 - December 2025
 
 ---
 
-## 📖 Project Overview
-This project implements a distributed control system that allows a user to drive a TurtleBot3 robot using hand gestures. The system uses a laptop (Ubuntu VM) as the "Brain" to process video and detect gestures, and the Raspberry Pi as the "Body" to execute motor commands.
+## 📖 Executive Summary
+This project implements a "Remote Control without a Remote" for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, we created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
+
+The system was built using **ROS Noetic** and **MediaPipe**, achieving real-time responsiveness with under 500ms latency.
+
+[[Placeholder: Insert GIF or Screenshot of Robot Moving Here]](https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206)
 
 <img width="1342" height="1024" alt="forward_tb3" src="https://github.com/user-attachments/assets/e321f4cb-2d22-442a-9720-85a99278f174" />
+
 *Figure 1: Real-time hand tracking and gesture classification of closed palm running on the workstation.*
 
 <img width="1342" height="1024" alt="right_tb3" src="https://github.com/user-attachments/assets/ac081369-1286-43df-844c-3ad7428bece9" />
+
 *Figure 2: Real-time hand tracking and gesture classification of closed palm & thumb poiting right palm running on the workstation.*
 
 
 <img width="1342" height="1024" alt="left_tb3" src="https://github.com/user-attachments/assets/a481bbed-79a4-4073-8eba-cbb5638f4c4c" />
+
 *Figure 3: Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation.*
 
-### 🎥 Demo
-https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206
 
 ---
 
 ## 🤖 System Architecture
-The system operates on a distributed ROS network:
+The project uses a **Distributed ROS Architecture** to split the workload:
+1.  **The Brain (Ubuntu VM):** Processes video feed to detect hand skeletons.
+2.  **The Body (Raspberry Pi 4):** Receives commands over WiFi and drives the motors.
 
-1.  **Gesture Node (Ubuntu VM):** Uses MediaPipe to detect hand landmarks. Maps poses (Open Palm, Fist, Thumb Direction) to ROS commands.
-2.  **Communication Layer:** Publishes string commands to `/gesture_command` topic over WiFi.
-3.  **Motion Node (Raspberry Pi):** Subscribes to commands and converts them into velocity inputs (`/cmd_vel`) for the motors. Includes a 3-second safety auto-stop.
-
-| Gesture | Command | Robot Action |
+| Component | Responsibility | Technology |
 | :--- | :--- | :--- |
-| **Fist** | `GO` | Move Forward (0.2 m/s) |
-| **Open Palm** | `STOP` | Stop immediately |
-| **Thumb Left** | `LEFT` | Rotate Left (0.5 rad/s) |
-| **Thumb Right** | `RIGHT` | Rotate Right (-0.5 rad/s) |
+| **Gesture Node** | Captures webcam video, classifies hand poses | Python, MediaPipe |
+| **Network** | Transmits "GO/STOP/LEFT" commands | ROS Topics, WiFi |
+| **Motion Node** | Converts commands to wheel velocity, handles safety | Python, TurtleBot3 Drivers |
+
+### Supported Gestures
+| Gesture | Action | Description |
+| :--- | :--- | :--- |
+| **Fist** | **FORWARD** | Robot drives straight at 0.2 m/s |
+| **Open Palm** | **STOP** | Robot halts immediately |
+| **Thumb Left** | **TURN LEFT** | Robot rotates counter-clockwise |
+| **Thumb Right** | **TURN RIGHT** | Robot rotates clockwise |
 
 ---
 
 ## 🛠️ Installation & Setup
 
-### Prerequisites
-* **Workstation:** Ubuntu 20.04 (VM or Native) with Webcam
-* **Robot:** TurtleBot3 (Burger/Waffle) with Raspberry Pi 4
-* **Network:** Both devices must be on the same WiFi network.
+### ⚠️ Hardware Setup & Prerequisites
+**Important:** This repository assumes your TurtleBot3 is already physically assembled, the OpenCR board is configured, and the Raspberry Pi is networked.
 
-### 1. Setup Workstation (The "Brain")
+If you are setting up the robot for the first time, you **must** complete the steps in the official **[TurtleBot3 Quick Start Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/)** first. This resource is helpful for:
+* Assembling the hardware chassis.
+* Flashing the Raspberry Pi with the correct ROS Noetic image.
+* Configuring the OpenCR motor driver board.
+* Setting up the basic network connection.
+
+**System Requirements:**
+* **Workstation:** Ubuntu 20.04 with Webcam (VM or Native)
+* **Robot:** TurtleBot3 (Burger model) with Raspberry Pi 4
+* **ROS Version:** Noetic
+* **Network:** Both devices must be on the same WiFi network and be able to ping each other.
+
+### 1. Workstation Setup (The "Brain")
 ```bash
 # Clone the repository
-git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
-cd turtlebot3-gesture-control
-```
-# Install Python dependencies
-```bash
+git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/turtlebot3-gesture-control.git
+
+# Install dependencies
 pip3 install mediapipe opencv-python
-```
-# Build the workspace
-```bash
+
+# Build workspace
+cd turtlebot3-gesture-control
 catkin_make
 source devel/setup.bash
-```
-### 2. Setup Raspberry Pi (The "Body")
-SSH into the robot and clone the same repo into your catkin workspace src folder.
+````
+
+### 2\. Robot Setup (The "Body")
+
+*SSH into the Raspberry Pi and clone this repo into `~/catkin_ws/src`*
+
 ```bash
-# On Raspberry Pi
 cd ~/catkin_ws/src
-git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
+git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/turtlebot3-gesture-control.git
 cd ~/catkin_ws
 catkin_make
 source devel/setup.bash
 ```
-## 🚀 Usage
 
-### Step 1: Bring up the Robot (On Pi)
-```bash
-export TURTLEBOT3_MODEL=burger
-roslaunch turtlebot3_bringup turtlebot3_robot.launch
-```
+-----
 
-### Step 2: Start Motion Control (On Pi)
-```bash
-rosrun motion_control motion_control_node.py
-```
+## 🚀 How to Run
 
-### Step 3: Start Gesture Recognition (On Workstation)
-```bash
-# Ensure ROS Master points to the Pi's IP
-export ROS_MASTER_URI=http://[PI_IP]:11311
-rosrun gesture_recognition gesture_recognition_node.py
-```
+1.  **Start the Robot Hardware (Pi):**
+
+    ```bash
+    roslaunch turtlebot3_bringup turtlebot3_robot.launch
+    ```
+
+2.  **Start Motion Listener (Pi):**
+
+    ```bash
+    rosrun motion_control motion_control_node.py
+    ```
+
+3.  **Start Vision System (Workstation):**
+
+    ```bash
+    # Ensure this points to your Robot's current IP
+    export ROS_MASTER_URI=http://[ROBOT_IP]:11311
+    rosrun turtlebot3_gesture gesture_recognition_node.py
+    ```
+
+-----
+
+## 🔮 Future Roadmap (Semester 2)
+
+  * **Obstacle Avoidance:** Integrate LIDAR sensors to prevent collisions.
+  * **Speed Control:** Use hand distance to control speed (closer = faster).
+  * **Onboard Processing:** Migrate vision models to run directly on the Raspberry Pi.
+
