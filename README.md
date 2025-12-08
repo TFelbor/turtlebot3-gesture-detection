@@ -69,7 +69,7 @@ If you are setting up the robot for the first time, you **must** complete the st
 ### 1. Workstation Setup (The "Brain")
 ```bash
 # Clone the repository
-git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/turtlebot3-gesture-control.git
+git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
 
 # Install dependencies
 pip3 install mediapipe opencv-python
@@ -86,7 +86,7 @@ source devel/setup.bash
 
 ```bash
 cd ~/catkin_ws/src
-git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/turtlebot3-gesture-control.git
+git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
 cd ~/catkin_ws
 catkin_make
 source devel/setup.bash
