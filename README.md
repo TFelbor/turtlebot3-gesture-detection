@@ -10,17 +10,17 @@
 This project implements a distributed control system that allows a user to drive a TurtleBot3 robot using hand gestures. The system uses a laptop (Ubuntu VM) as the "Brain" to process video and detect gestures, and the Raspberry Pi as the "Body" to execute motor commands.
 
 <img width="1342" height="1024" alt="forward_tb3" src="https://github.com/user-attachments/assets/e321f4cb-2d22-442a-9720-85a99278f174" />
-*Figure 1: Real-time hand tracking and gesture classification of closed palm running on the workstation. *
+*Figure 1: Real-time hand tracking and gesture classification of closed palm running on the workstation.*
 
 <img width="1342" height="1024" alt="right_tb3" src="https://github.com/user-attachments/assets/ac081369-1286-43df-844c-3ad7428bece9" />
-*Figure 2: Real-time hand tracking and gesture classification of closed palm & thumb poiting right palm running on the workstation. *
+*Figure 2: Real-time hand tracking and gesture classification of closed palm & thumb poiting right palm running on the workstation.*
 
 
-*Figure 3: <img width="1342" height="1024" alt="left_tb3" src="https://github.com/user-attachments/assets/a481bbed-79a4-4073-8eba-cbb5638f4c4c" />
-Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation. *
+<img width="1342" height="1024" alt="left_tb3" src="https://github.com/user-attachments/assets/a481bbed-79a4-4073-8eba-cbb5638f4c4c" />
+*Figure 3: Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation.*
 
 ### 🎥 Demo
-https://github.com/user-attachments/assets/9bf3f15a-3167-44c4-959b-4a0bacf9df19
+https://github.com/user-attachments/assets/demo
 
 ---
 
