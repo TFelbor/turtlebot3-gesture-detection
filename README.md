@@ -89,7 +89,7 @@ Gesture Recognition Node          Motion Control Node
                                        (auto-STOP signal)
 ```
 ### State Machine Diagram
-
+```
 stateDiagram-v2
     [*] --> Idle
     
@@ -112,7 +112,7 @@ stateDiagram-v2
     }
     
     TimerExpired --> Idle : Trigger Auto-STOP
-
+```
 ### 🤙 Supported Gestures
 | Gesture | Action | Description |
 | :--- | :--- | :--- |
