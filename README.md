@@ -1,111 +1,93 @@
-# TurtleBot 3 with Gesture Recognition
-The repository showcases a turtlebot 3 Burger robot for gesture recognition, focusing on human-robot interaction and evaluating gesture recognition accuracy, developed over two semesters.
+# TurtleBot3 Hand Gesture Recognition System (v1.0)
 
-## Project Overview
-This repository contains the implementation of a human-following robot using the TurtleBot 3 Burger for gesture recognition. The robot responds to simple hand gestures (e.g., "stop," "go," "turn") to control its behavior. The project emphasizes human-robot interaction (HRI) with a research focus on evaluating gesture recognition accuracy. Developed as a two-semester project (September 2025–May 2026), it includes simulation in Gazebo and real-world testing.
+**Status:** Completed (Semester 1 Deliverable)  
+**Developer:** Tytus Felbor
+**Tech Stack:** ROS Noetic, MediaPipe, OpenCV, Python, TurtleBot3 (Raspberry Pi 4)
 
-## Software
+---
 
-1. ROS 2 Jazzy: Framework for robot control and communication.
-2. Python 3: Primary programming language for scripts and nodes.
-3. OpenCV: For human detection and tracking (e.g., color-based or cascade classifiers).
-4. MediaPipe: For gesture recognition (hand landmark detection).
-5. Gazebo: Simulation environment for prototyping and testing.
-6. RViz: Visualization tool for debugging and monitoring.
-7. TensorFlow Lite: Lightweight ML for gesture recognition (used in later phases).
-8. Jupyter: For data analysis and visualization during evaluation.
-9. Matplotlib: For plotting performance metrics.
-10. Git: Version control for collaborative development.
+## 📖 Project Overview
+This project implements a distributed control system that allows a user to drive a TurtleBot3 robot using hand gestures. The system uses a laptop (Ubuntu VM) as the "Brain" to process video and detect gestures, and the Raspberry Pi as the "Body" to execute motor commands.
 
-## Installation
+<img width="1342" height="1024" alt="forward_tb3" src="https://github.com/user-attachments/assets/e321f4cb-2d22-442a-9720-85a99278f174" />
+*Figure 1: Real-time hand tracking and gesture classification of closed palm running on the workstation. *
 
-1. Hardware Setup:
-* Assemble the TurtleBot 3 Burger per the official e-Manual.
-* Mount the camera on the front plate.
-* Connect and test all hardware components (motors, IMU, encoders).
+<img width="1342" height="1024" alt="right_tb3" src="https://github.com/user-attachments/assets/ac081369-1286-43df-844c-3ad7428bece9" />
+*Figure 2: Real-time hand tracking and gesture classification of closed palm & thumb poiting right palm running on the workstation. *
 
 
-2. Software Setup:
+*Figure 3: <img width="1342" height="1024" alt="left_tb3" src="https://github.com/user-attachments/assets/a481bbed-79a4-4073-8eba-cbb5638f4c4c" />
+Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation. *
 
-* Install ROS 2 Jazzy on the Raspberry Pi 4 and workstations. Follow the ROS 2 installation guide.
-* Install dependencies:sudo apt update
+### 🎥 Demo
+https://github.com/user-attachments/assets/9bf3f15a-3167-44c4-959b-4a0bacf9df19
+
+---
+
+## 🤖 System Architecture
+The system operates on a distributed ROS network:
+
+1.  **Gesture Node (Ubuntu VM):** Uses MediaPipe to detect hand landmarks. Maps poses (Open Palm, Fist, Thumb Direction) to ROS commands.
+2.  **Communication Layer:** Publishes string commands to `/gesture_command` topic over WiFi.
+3.  **Motion Node (Raspberry Pi):** Subscribes to commands and converts them into velocity inputs (`/cmd_vel`) for the motors. Includes a 3-second safety auto-stop.
+
+| Gesture | Command | Robot Action |
+| :--- | :--- | :--- |
+| **Fist** | `GO` | Move Forward (0.2 m/s) |
+| **Open Palm** | `STOP` | Stop immediately |
+| **Thumb Left** | `LEFT` | Rotate Left (0.5 rad/s) |
+| **Thumb Right** | `RIGHT` | Rotate Right (-0.5 rad/s) |
+
+---
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+* **Workstation:** Ubuntu 20.04 (VM or Native) with Webcam
+* **Robot:** TurtleBot3 (Burger/Waffle) with Raspberry Pi 4
+* **Network:** Both devices must be on the same WiFi network.
+
+### 1. Setup Workstation (The "Brain")
 ```bash
-sudo apt install python3-opencv python3-pip
-pip3 install mediapipe tensorflow
-sudo apt install ros-jazzy-turtlebot3 ros-jazzy-turtlebot3-msgs
+# Clone the repository
+git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
+cd turtlebot3-gesture-control
+```
+# Install Python dependencies
+```bash
+pip3 install mediapipe opencv-python
+```
+# Build the workspace
+```bash
+catkin_make
+source devel/setup.bash
+```
+### 2. Setup Raspberry Pi (The "Body")
+SSH into the robot and clone the same repo into your catkin workspace src folder.
+```bash
+# On Raspberry Pi
+cd ~/catkin_ws/src
+git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
+cd ~/catkin_ws
+catkin_make
+source devel/setup.bash
+```
+## 🚀 Usage
+
+### Step 1: Bring up the Robot (On Pi)
+```bash
+export TURTLEBOT3_MODEL=burger
+roslaunch turtlebot3_bringup turtlebot3_robot.launch
 ```
 
-* Set up ROS networking for SSH/remote control (ensure stable Ethernet or Wi-Fi).
-* Install Gazebo:sudo apt install ros-jazzy-gazebo-ros-pkgs
-
-
-
-
-3.  Repository Setup:
-
-* Clone this repository: 
+### Step 2: Start Motion Control (On Pi)
 ```bash
-git clone https://github.com/TFelbor/Research-and-Development-Project.git
+rosrun motion_control motion_control_node.py
 ```
 
-* Build the ROS workspace:
+### Step 3: Start Gesture Recognition (On Workstation)
 ```bash
-cd Research-and-Development-Project
-colcon build
-source install/setup.bash
+# Ensure ROS Master points to the Pi's IP
+export ROS_MASTER_URI=http://[PI_IP]:11311
+rosrun gesture_recognition gesture_recognition_node.py
 ```
-
-
-
-
-## Usage
-
-1. Teleoperation Test:
-* Verify hardware functionality:
-```bash
-ros2 run turtlebot3_teleop teleop_keyboard
-```
-* Ensure the camera streams correctly:
-```bash
-ros2 run image_transport republish --ros-args --remap /image_raw:=/camera/image_raw
-```
-
-2. Simulation:
-* Launch Gazebo simulation:
-
-```bash
-ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-```
-* Test human-following in simulation before physical deployment.
-
-3. Running the Prototype:
-* Launch the human-following node (after prototyping phase):
-```bash
-ros2 run human_following follow_person
-```
-* Gesture recognition (post-January 2026):
-```bash
-ros2 run gesture_recognition gesture_control
-```
-
-## Contributing
-
-* Use Git branches for features (e.g., feature/human-tracking, feature/gesture-recognition).
-* Document code and experiments thoroughly.
-* Log issues and metrics in the repository's Issues tab.
-
-## Challenges and Notes
-
-* Network Stability: Use Ethernet for reliable ROS communication.
-* Lighting Conditions: Test vision algorithms in varied environments.
-* Compute Limits: Offload heavy ML tasks to simulation or workstation if Raspberry Pi struggles.
-* Backups: Regularly back up code and ROS bag data.
-
-## Resources
-
-* TurtleBot 3 e-Manual
-* ROS 2 Jazzy Documentation
-* MediaPipe Guide
-* OpenCV Tutorials
-
-
