@@ -88,31 +88,7 @@ Gesture Recognition Node          Motion Control Node
         └───────────────────────────┴─ /gesture_timeout
                                        (auto-STOP signal)
 ```
-### State Machine Diagram
-```
-stateDiagram-v2
-    [*] --> Idle
-    
-    state "Idle / Wait" as Idle {
-        [*] --> NoHandDetected
-    }
 
-    state "Active Operation" as Active {
-        Moving --> Moving : Hand Tracked
-        Moving --> SafetyPause : Hand Lost
-    }
-
-    Idle --> Active : Hand Detected
-    Active --> Idle : Safety Timeout (>3s)
-    
-    state SafetyPause {
-        [*] --> TimerStart
-        TimerStart --> TimerExpired : > 3 Seconds
-        TimerStart --> Moving : Hand Regained
-    }
-    
-    TimerExpired --> Idle : Trigger Auto-STOP
-```
 ### 🤙 Supported Gestures
 | Gesture | Action | Description |
 | :--- | :--- | :--- |
