@@ -1,16 +1,19 @@
 # TurtleBot3 Hand Gesture Recognition System (v1.0)
 
-**Project Status:** Completed (Semester 1 Deliverable)  
-**Timeline:** September 2025 - December 2025
+This project implements a "Remote Control without a Remote" for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, we created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
 
 ---
 
 ## 📖 Executive Summary
-This project implements a "Remote Control without a Remote" for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, we created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
+
+**Project Status:** Completed (Semester 1 Deliverable)  
+**Timeline:** September 2025 - December 2025
+
+The TurtleBot3 Hand Gesture Recognition Control System is an R&D project designed to enable intuitive human-robot interaction through hand gesture recognition. This project combines computer vision (MediaPipe), real-time processing, and robotics (ROS + TurtleBot3) to create a direct teleoperation interface controlled entirely by hand gestures. The system will recognize five fundamental gesture commands (GO, STOP, LEFT, RIGHT) and translate them into robot movements, providing a foundation for future human-robot interaction research.
 
 The system was built using **ROS Noetic** and **MediaPipe**, achieving real-time responsiveness with under 500ms latency.
 
-[[Placeholder: Insert GIF or Screenshot of Robot Moving Here]](https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206)
+[[Demo GIF]](https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206)
 
 <img width="1342" height="1024" alt="forward_tb3" src="https://github.com/user-attachments/assets/e321f4cb-2d22-442a-9720-85a99278f174" />
 
