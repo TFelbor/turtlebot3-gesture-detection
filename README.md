@@ -1,6 +1,6 @@
 # TurtleBot3 Hand Gesture Recognition System (v1.0)
 
-This project implements a "Remote Control without a Remote" for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, we created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
+This project implements a Remote Control by gesture for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, I created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
 
 ---
 
