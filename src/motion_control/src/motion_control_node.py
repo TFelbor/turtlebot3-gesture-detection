@@ -31,8 +31,8 @@ class MotionNode:
         twist = Twist()
         
         # PRD Specifications:
-        # GO = Linear 0.2 m/s [cite: 28]
-        # STOP = 0.0 m/s [cite: 29]
+        # GO = Linear 0.2 m/s
+        # STOP = 0.0 m/s 
         
         if self.current_gesture == "GO":
             twist.linear.x = 0.2
@@ -54,7 +54,7 @@ class MotionNode:
         """Checks if we lost connection to the VM"""
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
-            # Safety Timeout: If no command for 3 seconds, STOP [cite: 33]
+            # Safety Timeout: If no command for 3 seconds, STOP
             time_since_last = rospy.Time.now() - self.last_command_time
             
             if time_since_last.to_sec() > 3.0:
