@@ -1,4 +1,4 @@
-# 🐢 TurtleBot3 Hand Gesture Recognition System (v2.0)
+# TurtleBot3 Hand Gesture Recognition System (v2.0)
 
 This project implements remote teleoperation for the TurtleBot3 robot via real-time hand gestures. By leveraging computer vision and distributed robotics, users can drive a mobile robot using intuitive hand poses (e.g., a fist to drive forward, a thumb to turn left). 
 
@@ -14,8 +14,6 @@ As of the **v2.0 Update (`v2-cnn-pytorch` branch)**, this project features two s
 The TurtleBot3 Hand Gesture Recognition Control System is an R&D project designed to enable intuitive human-robot interaction. The system recognizes fundamental gesture commands (GO, STOP, LEFT, RIGHT, WAIT) and translates them into `/cmd_vel` motor velocities. 
 
 The v2.0 update focused on migrating from a purely logic-based landmark detection pipeline (MediaPipe) to a custom-trained Convolutional Neural Network (PyTorch/MobileNetV2). Additionally, a peer-to-peer Tailscale VPN was integrated to bypass local Wi-Fi router restrictions, ensuring seamless bidirectional ROS communication between the inference workstation and the Raspberry Pi.
-
-[Drag and drop your Demo GIF here]
 
 <img width="890" height="802" alt="camera_dashboard" src="https://github.com/user-attachments/assets/1fc46ddf-25bf-465c-a66d-a3147e578529" />
 
