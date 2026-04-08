@@ -18,9 +18,11 @@ The v2.0 update focused on migrating from a purely logic-based landmark detectio
 [Drag and drop your Demo GIF here]
 
 <img width="890" height="802" alt="camera_dashboard" src="https://github.com/user-attachments/assets/1fc46ddf-25bf-465c-a66d-a3147e578529" />
+
 *Figure 1: The real-time camera dashboard highlighting PyTorch CNN gesture inference and the active Majority Vote Smoothing Filter.*
 
 <img width="1036" height="828" alt="training_benchmark" src="https://github.com/user-attachments/assets/86d04c28-e8eb-4ed5-816a-74e1a109fe76" />
+
 *Figure 2: Confusion matrix benchmarking the MobileNetV2 training results and accuracy on the validation set.*
 
 ---
