@@ -1,170 +1,97 @@
-# TurtleBot3 Hand Gesture Recognition System (v1.0)
+# 🐢 TurtleBot3 Gesture Control (ROS Noetic)
 
-This project implements a remote control by gesture for the TurtleBot3 robot. By leveraging computer vision and distributed robotics, I created a system that allows users to drive a mobile robot using intuitive hand gestures (e.g., a fist to drive forward, a thumb to turn left). 
+This repository contains a distributed ROS Noetic pipeline that allows a user to control a TurtleBot3 Burger using real-time hand gestures. 
 
----
+As of the **Fall Semester Update (`v2-cnn-pytorch` branch)**, this project features two selectable vision architectures:
+1. **MediaPipe Version:** A heuristic, logic-based approach using Google's MediaPipe hand landmark detection.
+2. **PyTorch CNN Version:** A custom, data-driven approach using Transfer Learning on a MobileNetV2 Convolutional Neural Network.
 
-## 📖 Executive Summary
-
-**Project Status:** Completed (Semester 1 Deliverable)  
-**Timeline:** September 2025 - December 2025
-
-The TurtleBot3 Hand Gesture Recognition Control System is an R&D project designed to enable intuitive human-robot interaction through hand gesture recognition. This project combines computer vision (MediaPipe), real-time processing, and robotics (ROS + TurtleBot3) to create a direct teleoperation interface controlled entirely by hand gestures. The system will recognize five fundamental gesture commands (GO, STOP, LEFT, RIGHT) and translate them into robot movements, providing a foundation for future human-robot interaction research.
-
-The system was built using **ROS Noetic** and **MediaPipe**, achieving real-time responsiveness with under 500ms latency.
-
-[[Demo GIF]](https://github.com/user-attachments/assets/b3628aa3-530c-42d3-add7-b791bc518206)
-
-<img width="1342" height="1024" alt="forward_tb3" src="https://github.com/user-attachments/assets/e321f4cb-2d22-442a-9720-85a99278f174" />
-
-*Figure 1: Real-time hand tracking and gesture classification of closed palm running on the workstation.*
-
-<img width="1342" height="1024" alt="right_tb3" src="https://github.com/user-attachments/assets/ac081369-1286-43df-844c-3ad7428bece9" />
-
-*Figure 2: Real-time hand tracking and gesture classification of closed palm & thumb poiting right palm running on the workstation.*
-
-
-<img width="1342" height="1024" alt="left_tb3" src="https://github.com/user-attachments/assets/a481bbed-79a4-4073-8eba-cbb5638f4c4c" />
-
-*Figure 3: Real-time hand tracking and gesture classification of closed palm & thumb pointing left running on the workstation.*
-
+## 🏗️ System Architecture
+The system is divided into three primary components communicating over a secure VPN tunnel:
+* **The Brain (Remote VM):** An Ubuntu virtual machine that processes webcam frames, runs the heavy deep learning/computer vision models, and publishes `std_msgs/String` commands.
+* **The Spine (Tailscale VPN):** A peer-to-peer overlay network that bypasses local Wi-Fi router AP isolation, allowing bidirectional ROS communication.
+* **The Body (Raspberry Pi & OpenCR):** The TurtleBot3 hardware that subscribes to the gesture commands and translates them into `/cmd_vel` motor velocities.
 
 ---
 
-## 🤖 System Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                       UBUNTU VM (Development Machine)       │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │  Gesture Recognition Node (Python + MediaPipe)          ││
-│  │  - Capture video from built in camera                   ││
-│  │  - Detect hand poses using MediaPipe                    ││
-│  │  - Map poses to gesture commands (GO, STOP, etc.)       ││
-│  │  - Publish commands to ROS topic: /gesture_command      ││
-│  └─────────────────────────────────────────────────────────┘│
-│              ↓ (ROS topic: /gesture_command)                │
-│         Over Network (WiFi/SSH)                             │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                 RASPBERRY PI 4 (TurtleBot3)                 │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │  Motion Control Node (Python + ROS)                     ││
-│  │  - Subscribe to /gesture_command topic                  ││
-│  │  - Translate commands to wheel velocities               ││
-│  │  - Implement 3-second auto-STOP safety feature          ││
-│  │  - Publish to /cmd_vel (motor control)                  ││
-│  └─────────────────────────────────────────────────────────┘│
-│              ↓ (ROS topic: /cmd_vel)                        │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │  TurtleBot3 Motor Drivers                               ││
-│  │  - Actuate wheels based on velocity commands            ││
-│  │  - Provide odometry feedback (optional)                 ││
-│  └─────────────────────────────────────────────────────────┘│
-│              ↓ (Physical)                                   │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │  TurtleBot3 Chassis & Motors                            ││
-│  │  - Execute movement commands                            ││
-│  └─────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 🔄 ROS Node Communication Graph
-
-```
-Gesture Recognition Node          Motion Control Node
-    (Ubuntu VM)                      (Raspberry Pi)
-        │                                  │
-        │ Publishes:                       │
-        ├─→ /gesture_command ─────────────→ Subscribes
-        │  (String: GO, STOP,              │
-        │   LEFT, RIGHT, BACK-UP)          │
-        │                                  │
-        │                           Publishes:
-        │                           │
-        │                           ├─→ /cmd_vel
-        │                              (Twist message)
-        │                              
-        │                           Subscribes:
-        │                           │
-        └───────────────────────────┴─ /gesture_timeout
-                                       (auto-STOP signal)
-```
-
-### 🤙 Supported Gestures
-| Gesture | Action | Description |
-| :--- | :--- | :--- |
-| **Fist** | **FORWARD** | Robot drives straight at 0.2 m/s |
-| **Open Palm** | **STOP** | Robot halts immediately |
-| **Thumb Left** | **TURN LEFT** | Robot rotates counter-clockwise |
-| **Thumb Right** | **TURN RIGHT** | Robot rotates clockwise |
+## 🛠️ Prerequisites & Dependencies
+* **OS:** Ubuntu 20.04 (VM) and Ubuntu 20.04 Server (Raspberry Pi)
+* **Middleware:** ROS Noetic
+* **Python Packages (VM):** `torch`, `torchvision`, `mediapipe`, `opencv-python`, `scikit-learn`, `seaborn`
 
 ---
 
-## 🛠️ Installation & Setup
+## 🌐 Networking Setup (Tailscale)
+A major component of this project is the Tailscale VPN integration, which guarantees connection stability regardless of dynamic local IPs or university/hotspot network restrictions.
 
-### ⚠️ Hardware Setup & Prerequisites
-**Important:** This repository assumes your TurtleBot3 is already physically assembled, the OpenCR board is configured, and the Raspberry Pi is networked.
+1. Install [Tailscale](https://tailscale.com/) on both your Ubuntu VM and the Raspberry Pi.
+2. Authenticate both devices to the same Tailscale account.
+3. Note the static `100.x.x.x` IP addresses assigned to both devices.
+4. Update the bash scripts (`robot_start.sh` and `robot_connect.sh`) on your VM with these IPs:
+   ```bash
+   PI_IP="100.x.x.x"  # Your Pi's Tailscale IP
+   VM_IP="100.y.y.y"  # Your VM's Tailscale IP
+   ```
 
-If you are setting up the robot for the first time, you **must** complete the steps in the official **[TurtleBot3 Quick Start Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/)** first. This resource is helpful for:
-* Assembling the hardware chassis.
-* Flashing the Raspberry Pi with the correct ROS Noetic image.
-* Configuring the OpenCR motor driver board.
-* Setting up the basic network connection.
+---
 
-**System Requirements:**
-* **Workstation:** Ubuntu 20.04 with Webcam (VM or Native)
-* **Robot:** TurtleBot3 (Burger model) with Raspberry Pi 4
-* **ROS Version:** Noetic
-* **Network:** Both devices must be on the same WiFi network and be able to ping each other.
-
-### 1. Workstation Setup (The "Brain")
-```bash
-# Clone the repository
-git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
-
-# Install dependencies
-pip3 install mediapipe opencv-python
-
-# Build workspace
-cd turtlebot3-gesture-control
-catkin_make
-source devel/setup.bash
-````
-
-### 2. Robot Setup (The "Body")
-
-*SSH into the Raspberry Pi and clone this repo into `~/catkin_ws/src`*
+## 🚀 Installation
+Clone this specific branch into your VM's catkin workspace:
 
 ```bash
 cd ~/catkin_ws/src
-git clone [https://github.com/](https://github.com/)TFelbor/turtlebot3-gesture-control.git
+git clone -b v2-cnn-pytorch https://github.com/TFelbor/turtlebot3-gesture-detection.git
 cd ~/catkin_ws
 catkin_make
 source devel/setup.bash
 ```
+*(Note: The custom training dataset is omitted from this repository due to size constraints, but the trained PyTorch weights (`gesture_model_v2.pth`) are included).*
 
 ---
 
-## 🚀 How to Run
+## 🎮 Running the Robot
 
-1.  **Start the Robot Hardware (Pi):**
+To run the system, you will need **three terminal windows** open on your VM.
 
-    ```bash
-    roslaunch turtlebot3_bringup turtlebot3_robot.launch
-    ```
+### Terminal 1: Start the ROS Master
+```bash
+roscore
+```
 
-2.  **Start Motion Listener (Pi):**
+### Terminal 2: Boot the Robot Hardware
+Use the provided bash script to securely SSH into the Pi over Tailscale and launch the motor drivers and motion logic in the background.
+```bash
+cd ~/Desktop/v2
+./robot_start.sh
+```
 
-    ```bash
-    rosrun motion_control motion_control_node.py
-    ```
+### Terminal 3: Launch the Vision System
+You can choose which brain to use by running the corresponding launch file:
 
-3.  **Start Vision System (Workstation):**
+**Option A: Run the PyTorch CNN Model**
+```bash
+roslaunch turtlebot3_gesture gesture_control_cnn.launch
+```
+**Option B: Run the MediaPipe Model**
+```bash
+roslaunch turtlebot3_gesture gesture_control_mediapipe.launch
+```
 
-    ```bash
-    # Ensure this points to your Robot's current IP
-    export ROS_MASTER_URI=http://[ROBOT_IP]:11311
-    rosrun turtlebot3_gesture gesture_recognition_node.py
-    ```
+---
+
+## 🤙 Gesture Command Dictionary
+
+| Gesture | Action | Velocity Command |
+| :--- | :--- | :--- |
+| **Fist** | **GO** (Forward) | Linear X: `0.2 m/s` |
+| **Open Palm** | **STOP** | Linear X: `0.0 m/s` |
+| **Thumb Left** | **LEFT** (Rotate) | Angular Z: `0.5 rad/s` |
+| **Thumb Right** | **RIGHT** (Rotate) | Angular Z: `-0.5 rad/s` |
+| **Neutral / Unsure** | **WAIT** (Filter) | Linear X: `0.0 m/s` |
+
+*(Note: The `motion_control_node` includes a built-in safety timeout. If the robot loses connection to the VM or receives no commands for 3 seconds, it will automatically STOP).*
+
+---
+
+## 📊 Performance Notes: CNN vs. MediaPipe
+While the implementation of a custom MobileNetV2 CNN was an excellent exercise in deep learning, empirical testing showed that the **MediaPipe implementation remained more robust in varied environments.** Because the custom CNN dataset was captured in a specific, well-lit room, the model exhibited environmental bias (overfitting to lighting/contrast). MediaPipe, which relies on contrast-agnostic skeletal landmark detection rather than pixel-texture analysis, proved significantly more stable against dynamic backgrounds and shadows. A **Majority Vote Smoothing Filter** was implemented on the CNN node to mitigate prediction jitter, but MediaPipe remains the recommended architecture for immediate deployment. Future CNN improvements require aggressive dataset diversification and image augmentation.
