@@ -1,12 +1,22 @@
-# ROS Build Artifacts
-build/
-devel/
-install/
-logs/
-.catkin_workspace
+# Ignore custom dataset folders
+data/
+dataset/
+
+# Ignore raw images (but keep our README dashboard screenshot!)
+*.jpg
+*.jpeg
+*.png
+!training_benchmark.png
+
+# Ignore Python caches
+__pycache__/
 *.pyc
 
-# System
+# Ignore ROS build artifacts
+build/
+devel/
+.catkin_workspace
+CMakeLists.txt.user
+
+# Ignore Mac/OS system files (just in case)
 .DS_Store
-.vscode/
-__pycache__/
