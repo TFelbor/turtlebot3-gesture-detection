@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch" />
+
+    <node pkg="motion_control" type="motion_control_node.py" name="motion_control_node" output="screen" />
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="turtlebot3_gesture" type="gesture_cnn_node.py" name="gesture_recognition_node" output="screen">
+        <param name="model_path" value="/home/tf/Desktop/v2/gesture_model_v2.pth"/>
+    </node>
+</launch>
